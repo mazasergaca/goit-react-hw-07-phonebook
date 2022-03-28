@@ -9,7 +9,7 @@ import './index.css';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store.store}>
+    <Provider store={store.storeCreate}>
       <PersistGate loading={null} persistor={store.persistor}>
         <App />
       </PersistGate>
