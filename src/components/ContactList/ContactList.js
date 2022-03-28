@@ -1,12 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
+import contactsActions from 'components/redux/contacts/contacts-actions';
 import s from './ContactList.module.css';
 
-const ContactList = ({ visibleContacts, deleteContact }) => {
+const ContactList = ({ contacts, deleteContact }) => {
   const message = 'No contacts';
-  return visibleContacts.length > 0 ? (
+  return contacts.length > 0 ? (
     <ul className={s.list}>
-      {visibleContacts.map(({ name, number, id }) => (
+      {contacts.map(({ name, number, id }) => (
         <li className={s.item} key={id}>
           <span className={s.contact}>
             {name}: {number}
@@ -23,8 +25,25 @@ const ContactList = ({ visibleContacts, deleteContact }) => {
 };
 
 ContactList.propTypes = {
-  visibleContacts: PropTypes.arrayOf(PropTypes.shape).isRequired,
+  contacts: PropTypes.arrayOf(PropTypes.shape).isRequired,
   deleteContact: PropTypes.func.isRequired,
 };
 
-export default ContactList;
+const getVisibleContacts = (allContacts, filter) => {
+  const normalizedFilter = filter.toLowerCase();
+  return allContacts.filter(({ name }) =>
+    name.toLowerCase().includes(normalizedFilter)
+  );
+};
+
+const mapStateToProps = ({ contacts: { items, filter } }) => {
+  return { contacts: getVisibleContacts(items, filter) };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    deleteContact: id => dispatch(contactsActions.deleteContact(id)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactList);

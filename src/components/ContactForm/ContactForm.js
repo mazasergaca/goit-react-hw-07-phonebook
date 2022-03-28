@@ -1,13 +1,24 @@
 import { useState } from 'react';
+import { connect } from 'react-redux';
+import contactsActions from 'components/redux/contacts/contacts-actions';
 import PropTypes from 'prop-types';
 import s from './ContactForm.module.css';
 
-export default function ContactForm({ onSubmit }) {
+function ContactForm({ contacts, onSubmit }) {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
   function handleFormSubmit(event) {
     event.preventDefault();
+    let containName = false;
+    contacts.forEach(item => {
+      if (item.name === name) {
+        containName = true;
+      }
+    });
+    if (containName) {
+      return alert(`${name} is already in contacts.`);
+    }
     onSubmit(name, number);
     reset();
   }
@@ -70,3 +81,14 @@ export default function ContactForm({ onSubmit }) {
 ContactForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };
+
+const mapStateToProps = ({ contacts: { items } }) => {
+  return { contacts: items };
+};
+
+const mapDispatchToProps = dispatch => ({
+  onSubmit: (name, number) =>
+    dispatch(contactsActions.addContact(name, number)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactForm);
