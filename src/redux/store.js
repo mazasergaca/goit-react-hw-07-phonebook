@@ -11,7 +11,7 @@ import {
   REGISTER,
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import contactsReducer from './contacts/contacts-reducer';
+import contactsReducer from './contacts/contacts-slice';
 
 const persistConfig = {
   key: 'root',
