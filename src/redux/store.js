@@ -19,7 +19,7 @@ const persistConfig = {
   blacklist: ['filter'],
 };
 
-const storeCreate = configureStore({
+export const store = configureStore({
   reducer: {
     contacts: persistReducer(persistConfig, contactsReducer),
   },
@@ -32,8 +32,4 @@ const storeCreate = configureStore({
     }).concat(logger),
 });
 
-const persistor = persistStore(storeCreate);
-
-const store = { storeCreate, persistor };
-
-export default store;
+export const persistor = persistStore(store);
