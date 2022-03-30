@@ -1,0 +1,37 @@
+.item {
+    display: flex;
+    justify-content: space-between;
+  }
+  .item:not(:last-child) {
+    margin-bottom: 5px;
+  }
+  .contact {
+    background-color: #fff;
+    color: rgb(31, 31, 31);
+    border-radius: 4px;
+    padding: 3px 5px;
+  }
+  .button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 55px;
+    height: 25px;
+    padding: 2px 5px;
+    border-radius: 4px;
+    background-color: #fff;
+    border: 1px solid rgb(255, 255, 255);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 250ms linear, color 250ms linear;
+  }
+  
+  .button:hover,
+  .button:focus {
+    background-color: rgb(31, 31, 31);
+    color: #fff;
+  }
+  .button:active {
+    background-color: rgb(255, 152, 152);
+  }
+  

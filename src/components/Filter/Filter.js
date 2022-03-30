@@ -1,8 +1,7 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getFilter } from 'redux/contacts/contacts-selectors';
-import { changeFilter } from '../../redux/contacts/contacts-slice';
+import { changeFilter } from 'redux/contacts/contacts-slice';
 import s from './Filter.module.css';
 
 export default function Filter() {
@@ -21,8 +20,3 @@ export default function Filter() {
     </label>
   );
 }
-
-Filter.propTypes = {
-  value: PropTypes.string,
-  onChange: PropTypes.func,
-};

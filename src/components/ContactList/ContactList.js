@@ -1,36 +1,34 @@
-import PropTypes from 'prop-types';
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { getVisibleContacts } from 'redux/contacts/contacts-selectors';
-import { deleteContact } from 'redux/contacts/contacts-slice';
+import { useGetContactsQuery } from 'redux/contacts/contacts-api';
+import { Oval } from 'react-loader-spinner';
+import { getFilter } from 'redux/contacts/contacts-selectors';
+import { useSelector } from 'react-redux';
 import s from './ContactList.module.css';
+import ContactItem from 'components/ContactItem';
 
 export default function ContactList() {
-  const contacts = useSelector(getVisibleContacts);
-  const dispatch = useDispatch();
+  const filter = useSelector(getFilter);
+  const { data: contacts, isLoading } = useGetContactsQuery();
 
-  return contacts.length > 0 ? (
-    <ul className={s.list}>
-      {contacts.map(({ name, number, id }) => (
-        <li className={s.item} key={id}>
-          <span className={s.contact}>
-            {name}: {number}
-          </span>
-          <button
-            className={s.button}
-            onClick={() => dispatch(deleteContact(id))}
-          >
-            Delete
-          </button>
-        </li>
-      ))}
-    </ul>
-  ) : (
-    <span className={s.message}>No contacts&#128531;</span>
+  const getVisibleContacts = () => {
+    const normalizedFilter = filter?.toLowerCase();
+    return contacts?.filter(({ name }) =>
+      name.toLowerCase().includes(normalizedFilter)
+    );
+  };
+  return (
+    <>
+      {contacts && !isLoading && getVisibleContacts()?.length > 0 && (
+        <ul className={s.list}>
+          {getVisibleContacts().map(({ name, phone, id }) => (
+            <ContactItem key={id} name={name} phone={phone} id={id} />
+          ))}
+        </ul>
+      )}
+      {isLoading && <Oval color="#fff" secondaryColor="#ccc" />}
+      {getVisibleContacts()?.length === 0 && (
+        <span className={s.message}>No contacts&#128531;</span>
+      )}
+    </>
   );
 }
-
-ContactList.propTypes = {
-  contacts: PropTypes.arrayOf(PropTypes.shape),
-  deleteContact: PropTypes.func,
-};

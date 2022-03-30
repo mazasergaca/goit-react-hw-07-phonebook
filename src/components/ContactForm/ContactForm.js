@@ -1,18 +1,21 @@
 import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { getContacts } from 'redux/contacts/contacts-selectors';
-import { addContact } from 'redux/contacts/contacts-slice';
-import PropTypes from 'prop-types';
+import {
+  useCreateContactMutation,
+  useGetContactsQuery,
+} from 'redux/contacts/contacts-api';
+import { Oval } from 'react-loader-spinner';
 import s from './ContactForm.module.css';
 
 export default function ContactForm() {
   const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
-  const contacts = useSelector(getContacts);
-  const dispatch = useDispatch();
+  const [phone, setPhone] = useState('');
 
-  function handleFormSubmit(event) {
-    event.preventDefault();
+  const { data: contacts } = useGetContactsQuery();
+  const [createContact, result] = useCreateContactMutation();
+
+  function handleFormSubmit(e) {
+    e.preventDefault();
+
     let containName = false;
     contacts.forEach(item => {
       if (item.name === name) {
@@ -22,24 +25,24 @@ export default function ContactForm() {
     if (containName) {
       return alert(`${name} is already in contacts.`);
     }
-    dispatch(addContact({ name, number }));
+    createContact({ name, phone });
     reset();
   }
 
   function reset() {
     setName('');
-    setNumber('');
+    setPhone('');
   }
 
-  function handleChange(event) {
-    const { name, value } = event.currentTarget;
+  function handleChange(e) {
+    const { name, value } = e.currentTarget;
 
     switch (name) {
       case 'name':
         setName(value);
         break;
       case 'number':
-        setNumber(value);
+        setPhone(value);
         break;
       default:
         return;
@@ -62,7 +65,7 @@ export default function ContactForm() {
         />
       </label>
       <label className={s.label}>
-        Number
+        Phone
         <input
           className={s.input}
           type="tel"
@@ -70,18 +73,22 @@ export default function ContactForm() {
           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
           required
-          value={number}
+          value={phone}
           onChange={handleChange}
         />
       </label>
-      <button className={s.button} type="submit">
-        Add contact
+      <button className={s.button} disabled={result.isLoading} type="submit">
+        {result.isLoading ? (
+          <Oval
+            color="rgb(152, 255, 152)"
+            secondaryColor="#ccc"
+            width="20"
+            height="20"
+          />
+        ) : (
+          'Add contact'
+        )}
       </button>
     </form>
   );
 }
-
-ContactForm.propTypes = {
-  contacts: PropTypes.arrayOf(PropTypes.shape),
-  onSubmit: PropTypes.func,
-};
